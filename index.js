@@ -1,9 +1,10 @@
-const h = 500
-const w = 900
+const h = 600
+const w = 1500
 const p = 60
-const colors = ['lightblue','aquamarine','blue',   'violet',  'yellow', 'orange', 'red','maroon']
-const svg = d3.selectAll('body').append('svg').attr('height', h).attr('width', w).style('margin', 150)
-
+const colors = ['lightblue', 'aquamarine', 'blue', 'violet', 'yellow', 'orange', 'red', 'maroon', "black"]
+const svg = d3.selectAll('body').append('svg').attr('height', h).attr('width', w).attr('id','svg')
+const monthNames = ["January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"]
 //var threshold = d3.quantize().domain([]).range(['blue','lightblue', 'aquamarine', 'white','beige', 'yellow','orange','red'])
 
 fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json')
@@ -34,43 +35,47 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       .attr('fill', (d) => colorScale(d.variance))
       .attr('class', 'cell')
       .on('mouseover', (d) => {
-        tooltip.transition()
+        tooltip
           .style('visibility', 'visible')
           .attr('data-year', d.year)
-        let monthNames = ["January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"]
+          .style("left", d3.event.pageX - 60 + "px")
+          .style("top", d3.event.pageY - 100 + "px")
 
-        tooltip.html("Year: " + d.year + '<br>' + "Month: " + monthNames[d.month - 1] + ' : ' + d.variance)
+        .html("Year: " + d.year + '<br>' + "Month: " + monthNames[d.month - 1] + ' : ' + d.variance)
       })
       .on('mouseout', (d) => {
-        tooltip.transition()
+        tooltip
           .style('visibility', 'hidden')
-      });
+      })
+      ;
 
-      const legend = d3
+    const legend = d3
       .select("body")
       .append("svg")
       .attr("id", "legend")
-      .attr("width", 800)
+      .attr("width", w)
       .attr("height", 50);
 
-      legend.selectAll('rect').data(colors).enter().append('rect').attr("x", (_, i) => i * 50)
+    legend.selectAll('rect').data(colors).enter().append('rect').attr("x", (i,d) => d * 60)
       .attr("y", 0)
-      .attr("width", 50)
-      .attr("height", 50)
-      .attr("fill", (c) => c);
+      .attr("width", 60)
+      .attr("height", 20)
+      .attr("fill", (d) => d)
+      .attr('transform', 'translate(' + (w / 3) + ',' + (0) + ')');
 
 
-    var tooltip = d3.select("body").data(Data)
-      .append("div")
-      .attr("class", "toolTip")
-      .attr("id", "tooltip")
-      .attr('data-year', (d) => d.year);
+    var tooltip = d3.select("body")
+    .append('div')
+      .attr("class", "tooltip")
+      .attr("id", "tooltip");
 
+    const legendxAxis = d3.scaleLinear().domain([d3.min(Data.map((d) =>temp + d.variance)), d3.max(Data.map((d) =>temp + d.variance) )]).range([0, 60 * 9]) 
+    const legendAxis = d3.axisBottom(legendxAxis)
+    .tickFormat(d3.format('.1f'));
 
     const xAxis = d3.scaleLinear().domain([d3.min(Data.map((d) => d.year)), d3.max(Data.map((d) => d.year))]).range([60, w - p])
     const bottomAxis = d3.axisBottom(xAxis).tickFormat(d3.format('d'))
-    svg.append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + (h - 60) + ')').call(bottomAxis)
+    
 
     const yAxis = d3.scaleBand().domain(Data.map((d) => d.month)).range([60, h - p])
     const leftAxis = d3.axisLeft(yAxis).tickFormat(function (month) {
@@ -79,6 +84,8 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       var format = d3.timeFormat('%B');
       return format(date);
     })
-    svg.append('g').attr('id', 'y-axis').attr('transform', 'translate(60,0)').call(leftAxis)
 
+    svg.append('g').attr('id', 'y-axis').attr('transform', 'translate(60,0)').call(leftAxis)
+    svg.append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + (h - 60) + ')').call(bottomAxis)
+    legend.append('g').attr('transform', 'translate(' + (w / 3) + ',' + (20) + ')').call(legendAxis)
   })

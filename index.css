@@ -1,0 +1,21 @@
+#tooltip {
+    position: absolute;
+    text-align: center;
+    margin: 30px;
+    padding: 10px;
+    font: 12px;
+    background-color: rgb(125, 121, 121);
+    opacity: 0.9;
+    border: 2px solid black;
+}
+
+#svg{
+    margin: auto;
+    display: block;
+}
+#title{
+    text-align: center;
+}
+.tooltip:hover{
+    fill: black;
+    }
