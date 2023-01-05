@@ -12,6 +12,7 @@
 #svg{
     margin: auto;
     display: block;
+    background-color: beige;
 }
 #title{
     text-align: center;
@@ -19,3 +20,12 @@
 .tooltip:hover{
     fill: black;
     }
+#legend{
+    margin: auto;
+    padding: 0;
+    display: block;
+    background-color: beige;
+}
+body{
+    background-color: grey;
+}

@@ -1,7 +1,7 @@
 const h = 600
 const w = 1500
 const p = 60
-const colors = ['lightblue', 'aquamarine', 'blue', 'violet', 'yellow', 'orange', 'red', 'maroon', "black"]
+const colors = ['blue','lightblue', 'aquamarine', 'violet', 'yellow', 'orange', 'red', 'maroon', "black"]
 const svg = d3.selectAll('body').append('svg').attr('height', h).attr('width', w).attr('id','svg')
 const monthNames = ["January", "February", "March", "April", "May", "June",
 "July", "August", "September", "October", "November", "December"]
@@ -49,14 +49,16 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       })
       ;
 
+    var threshold = d3.scaleThreshold().domain([d3.min(Data.map((d) => d.variance + temp)), d3.max(Data.map((d) => d.variance + temp)),9]).range(colors)
     const legend = d3
       .select("body")
       .append("svg")
       .attr("id", "legend")
       .attr("width", w)
-      .attr("height", 50);
+      .attr("height", 60);
 
-    legend.selectAll('rect').data(colors).enter().append('rect').attr("x", (i,d) => d * 60)
+    legend.selectAll('rect').data(colors).enter().append('rect')
+    .attr("x", (i,d) => d *60)
       .attr("y", 0)
       .attr("width", 60)
       .attr("height", 20)
@@ -69,8 +71,8 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       .attr("class", "tooltip")
       .attr("id", "tooltip");
 
-    const legendxAxis = d3.scaleLinear().domain([d3.min(Data.map((d) =>temp + d.variance)), d3.max(Data.map((d) =>temp + d.variance) )]).range([0, 60 * 9]) 
-    const legendAxis = d3.axisBottom(legendxAxis)
+    const legendxAxis = d3.scaleLinear().domain([d3.min(Data.map((d) => d.variance + temp)), d3.max(Data.map((d) => d.variance + temp))]).range([0,60*9])
+    const legendAxis = d3.axisBottom().scale(legendxAxis).tickSize(10, 0).tickValues(threshold.domain())
     .tickFormat(d3.format('.1f'));
 
     const xAxis = d3.scaleLinear().domain([d3.min(Data.map((d) => d.year)), d3.max(Data.map((d) => d.year))]).range([60, w - p])
@@ -86,6 +88,8 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
     })
 
     svg.append('g').attr('id', 'y-axis').attr('transform', 'translate(60,0)').call(leftAxis)
-    svg.append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + (h - 60) + ')').call(bottomAxis)
-    legend.append('g').attr('transform', 'translate(' + (w / 3) + ',' + (20) + ')').call(legendAxis)
+    .append('text').text('Months').style('text-anchor', 'left').attr('transform', 'translate(-50,' + (h/2) + ')' + 'rotate(-90)').attr('fill','black')
+    svg.append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + (h - 60) + ')').call(bottomAxis).append('text').text('Years').style('text-anchor', 'middle')
+    .attr('transform', 'translate(' +(w/2) + ',' + 30 + ')').attr('fill','black')
+    legend.append('g').attr('transform', 'translate(' + (w/3) + ',' + (20) + ')').call(legendAxis)
   })
