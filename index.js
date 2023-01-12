@@ -1,11 +1,10 @@
-const h = 600
-const w = 1500
+const h = 700
+const w = 1600
 const p = 60
 const colors = ['blue','lightblue', 'aquamarine', 'violet', 'yellow', 'orange', 'red', 'maroon', "black"]
 const svg = d3.selectAll('body').append('svg').attr('height', h).attr('width', w).attr('id','svg')
 const monthNames = ["January", "February", "March", "April", "May", "June",
 "July", "August", "September", "October", "November", "December"]
-//var threshold = d3.quantize().domain([]).range(['blue','lightblue', 'aquamarine', 'white','beige', 'yellow','orange','red'])
 
 fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json')
   .then(response => response.json())
@@ -14,10 +13,6 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
     var Data = data.monthlyVariance.map(function (items) {
       return items
     })
-    var Year = data.monthlyVariance.map(function (items) {
-      return new Date(items.year)
-    })
-    console.log(Data)
 
     const xScale = d3.scaleBand().domain(Data.map((d) => d.year)).range([60, w - p])
     const yScale = d3.scaleBand().domain(Data.map((d) => d.month)).range([60, h - p])
@@ -41,7 +36,7 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
           .style("left", d3.event.pageX - 60 + "px")
           .style("top", d3.event.pageY - 100 + "px")
 
-        .html("Year: " + d.year + '<br>' + "Month: " + monthNames[d.month - 1] + ' : ' + d.variance)
+        .html("Year: " + d.year + '<br>' + "Month: " + monthNames[d.month - 1] + ' : ' + d.variance + '<br>' + 'Temp:' + (temp + d.variance))
       })
       .on('mouseout', (d) => {
         tooltip
@@ -72,7 +67,8 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       .attr("id", "tooltip");
 
     const legendxAxis = d3.scaleLinear().domain([d3.min(Data.map((d) => d.variance + temp)), d3.max(Data.map((d) => d.variance + temp))]).range([0,60*9])
-    const legendAxis = d3.axisBottom().scale(legendxAxis).tickSize(10, 0).tickValues(threshold.domain())
+    const legendAxis = d3.axisBottom().scale(legendxAxis).tickSize(10, 0)
+    .tickValues(d3.range(1.684, 13.888,(13.888 - 1.684) / 9))
     .tickFormat(d3.format('.1f'));
 
     const xAxis = d3.scaleLinear().domain([d3.min(Data.map((d) => d.year)), d3.max(Data.map((d) => d.year))]).range([60, w - p])
