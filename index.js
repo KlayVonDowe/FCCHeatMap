@@ -44,7 +44,6 @@ fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
       })
       ;
 
-    var threshold = d3.scaleThreshold().domain([d3.min(Data.map((d) => d.variance + temp)), d3.max(Data.map((d) => d.variance + temp)),9]).range(colors)
     const legend = d3
       .select("body")
       .append("svg")
